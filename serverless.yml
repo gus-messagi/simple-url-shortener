@@ -1,0 +1,30 @@
+service: aws-url-shortener
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-1
+  profile: default
+  environment:
+    DOMAIN: ${file(config.json):domain}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+package:
+  exclude:
+    - node_modules/**/*
+  include:
+    handler.ts
+
+functions:
+  generateUrl:
+    handler: lambdas/GenerateUrl.handler
+    events:
+      - http:
+          path: generate
+          method: post
